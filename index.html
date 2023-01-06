@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .layout {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        background: #d9d9d9;
+        padding: 10px;
+      }
+      .chart {
+        background: #fff;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        border: 1px solid #ccc;
+      }
+      .chartdiv-item {
+        width: 100%;
+        height: 400px;
+      }
+      p {
+        font-size: 20px;
+        font-weight: 600;
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="chart">
+        <p>Đối tượng tiếp nhận</p>
+        <div id="chartdiv" class="chartdiv-item"></div>
+      </div>
+      <div class="chart">
+        <p>Số lượt khám theo chuyên khoa</p>
+        <div id="chartdiv1" class="chartdiv-item"></div>
+      </div>
+      <div class="chart">
+        <p>Cận lâm sàn</p>
+        <div id="chartdiv2" class="chartdiv-item"></div>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+
+  <script>
+    am5.ready(function () {
+      // Create root element
+      // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+      var root = am5.Root.new("chartdiv");
+
+      // Set themes
+      // https://www.amcharts.com/docs/v5/concepts/themes/
+      root.setThemes([am5themes_Animated.new(root)]);
+
+      // Create chart
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/
+      var chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+          panX: true,
+          panY: true,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          pinchZoomX: true,
+        })
+      );
+
+      // Add cursor
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+      var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+      cursor.lineY.set("visible", false);
+
+      // Create axes
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+      var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+      xRenderer.labels.template.setAll({
+        rotation: -90,
+        centerY: am5.p50,
+        centerX: am5.p100,
+        paddingRight: 15,
+      });
+
+      var xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+          maxDeviation: 0.3,
+          categoryField: "country",
+          renderer: xRenderer,
+          tooltip: am5.Tooltip.new(root, {}),
+        })
+      );
+
+      var yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+          maxDeviation: 0.3,
+          renderer: am5xy.AxisRendererY.new(root, {}),
+        })
+      );
+
+      // Create series
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+      var series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name: "Series 1",
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "value",
+          sequencedInterpolation: true,
+          categoryXField: "country",
+          tooltip: am5.Tooltip.new(root, {
+            labelText: "{valueY}",
+          }),
+        })
+      );
+
+      series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
+      series.columns.template.adapters.add("fill", function (fill, target) {
+        return chart.get("colors").getIndex(series.columns.indexOf(target));
+      });
+
+      series.columns.template.adapters.add("stroke", function (stroke, target) {
+        return chart.get("colors").getIndex(series.columns.indexOf(target));
+      });
+
+      // Set data
+      var data = [
+        {
+          country: "Có giấy chuyển tuyến",
+          value: 1881,
+        },
+        {
+          country: "Dịch Vụ BHTN",
+          value: 5893,
+        },
+        {
+          country: "Dịch vụ BHYT",
+          value: 2000,
+        },
+        {
+          country: "Dịch Vụ theo Y/C",
+          value: 3000,
+        },
+      ];
+
+      xAxis.data.setAll(data);
+      series.data.setAll(data);
+
+      // Make stuff animate on load
+      // https://www.amcharts.com/docs/v5/concepts/animations/
+      series.appear(1000);
+      chart.appear(1000, 100);
+    }); // end am5.ready()
+  </script>
+
+  <script>
+    am5.ready(function () {
+      // Create root element
+      // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+      var root = am5.Root.new("chartdiv1");
+
+      // Set themes
+      // https://www.amcharts.com/docs/v5/concepts/themes/
+      root.setThemes([am5themes_Animated.new(root)]);
+
+      // Create chart
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/
+      var chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+          panX: true,
+          panY: true,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          pinchZoomX: true,
+        })
+      );
+
+      // Add cursor
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+      var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+      cursor.lineY.set("visible", false);
+
+      // Create axes
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+      var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+      xRenderer.labels.template.setAll({
+        rotation: -90,
+        centerY: am5.p50,
+        centerX: am5.p100,
+        paddingRight: 15,
+      });
+
+      var xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+          maxDeviation: 0.3,
+          categoryField: "country",
+          renderer: xRenderer,
+          tooltip: am5.Tooltip.new(root, {}),
+        })
+      );
+
+      var yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+          maxDeviation: 0.3,
+          renderer: am5xy.AxisRendererY.new(root, {}),
+        })
+      );
+
+      // Create series
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+      var series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name: "Series 1",
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "value",
+          sequencedInterpolation: true,
+          categoryXField: "country",
+          tooltip: am5.Tooltip.new(root, {
+            labelText: "{valueY}",
+          }),
+        })
+      );
+
+      series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
+      series.columns.template.adapters.add("fill", function (fill, target) {
+        return chart.get("colors").getIndex(series.columns.indexOf(target));
+      });
+
+      series.columns.template.adapters.add("stroke", function (stroke, target) {
+        return chart.get("colors").getIndex(series.columns.indexOf(target));
+      });
+
+      // Set data
+      var data = [
+        {
+          country: "Chuyên Khoa Nội",
+          value: 83087,
+        },
+        {
+          country: "Chuyên Khoa Ngoại",
+          value: 30660,
+        },
+        {
+          country: "Chuyên Khoa Sản",
+          value: 20891,
+        },
+        {
+          country: "Liên Chuyên Khoa",
+          value: 24680,
+        },
+        {
+          country: "Y Học Cổ Truyền",
+          value: 1552,
+        },
+        {
+          country: "Da Liễu",
+          value: 15385,
+        },
+      ];
+
+      xAxis.data.setAll(data);
+      series.data.setAll(data);
+
+      // Make stuff animate on load
+      // https://www.amcharts.com/docs/v5/concepts/animations/
+      series.appear(1000);
+      chart.appear(1000, 100);
+    }); // end am5.ready()
+  </script>
+
+
+<script>
+    am5.ready(function() {
+    
+    // Create root element
+    // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+    var root = am5.Root.new("chartdiv2");
+    
+    
+    // Set themes
+    // https://www.amcharts.com/docs/v5/concepts/themes/
+    root.setThemes([
+      am5themes_Animated.new(root)
+    ]);
+    
+    
+    // Create chart
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/
+    var chart = root.container.children.push(am5xy.XYChart.new(root, {
+      panX: false,
+      panY: false,
+      wheelX: "panX",
+      wheelY: "zoomX",
+      layout: root.verticalLayout
+    }));
+    
+    
+    // Add legend
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/legend-xy-series/
+    var legend = chart.children.push(
+      am5.Legend.new(root, {
+        centerX: am5.p50,
+        x: am5.p50
+      })
+    );
+    
+    var data = [{
+      "year": "2021",
+      "Khám bệnh và kiểm tra sức khỏe": 19760,
+      "Cận lâm sàn": 146856,
+      "Thủ thuật": 16027,
+      "Phẩu thuật": 742,
+      "Giường bệnh": 18281,
+      "Ngân hàng máu": 279
+    }, {
+      "year": "2022",
+      "Khám bệnh và kiểm tra sức khỏe": 30166,
+      "Cận lâm sàn": 163199,
+      "Thủ thuật": 20104.5,
+      "Phẩu thuật": 861,
+      "Giường bệnh": 17571.5,
+      "Ngân hàng máu": 279
+    }, ]
+    
+    
+    // Create axes
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+      categoryField: "year",
+      renderer: am5xy.AxisRendererX.new(root, {
+        cellStartLocation: 0.1,
+        cellEndLocation: 0.9
+      }),
+      tooltip: am5.Tooltip.new(root, {})
+    }));
+    
+    xAxis.data.setAll(data);
+    
+    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+      renderer: am5xy.AxisRendererY.new(root, {})
+    }));
+    
+    
+    // Add series
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+    function makeSeries(name, fieldName) {
+      var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+        name: name,
+        xAxis: xAxis,
+        yAxis: yAxis,
+        valueYField: fieldName,
+        categoryXField: "year"
+      }));
+    
+      series.columns.template.setAll({
+        tooltipText: "{name}, {categoryX}:{valueY}",
+        width: am5.percent(90),
+        tooltipY: 0
+      });
+    
+      series.data.setAll(data);
+    
+      // Make stuff animate on load
+      // https://www.amcharts.com/docs/v5/concepts/animations/
+      series.appear();
+    
+      series.bullets.push(function () {
+        return am5.Bullet.new(root, {
+          locationY: 0,
+          sprite: am5.Label.new(root, {
+            text: "{valueY}",
+            fill: root.interfaceColors.get("alternativeText"),
+            centerY: 0,
+            centerX: am5.p50,
+            populateText: true
+          })
+        });
+      });
+    
+      legend.data.push(series);
+    }
+    
+    makeSeries("Khám bệnh và kiểm tra sức khỏe", "Khám bệnh và kiểm tra sức khỏe");
+    makeSeries("Cận lâm sàn", "Cận lâm sàn");
+    makeSeries("Thủ thuật", "Thủ thuật");
+    makeSeries("Phẩu thuật", "Phẩu thuật");
+    makeSeries("Giường bệnh", "Giường bệnh");
+    makeSeries("Ngân hàng máu", "Ngân hàng máu");
+    
+    
+    // Make stuff animate on load
+    // https://www.amcharts.com/docs/v5/concepts/animations/
+    chart.appear(1000, 100);
+    
+    }); // end am5.ready()
+    </script>
+</html>
